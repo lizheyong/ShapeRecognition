@@ -1,20 +1,24 @@
-import torch
-from torchvision import transforms, datasets
-import torch.nn as nn
+import torchvision
+import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
+import matplotlib.pyplot as plt
 
-transforms = transforms.Compose([
-    transforms.ToTensor()  # 把图片进行归一化，并把数据转换成Tensor类型
-])
 
-path = r'.\dataset\circle'
-data_train = datasets.ImageFolder(path, transform=transforms)
 
-data_loader = DataLoader(data_train, batch_size=64, shuffle=True)
+if __name__ == '__main__':
+    train_transform = transforms.Compose([
+        transforms.ToTensor()
+    ])
 
-for i, data in enumerate(data_loader):
-    images, labels = data
+    dataset = torchvision.datasets.ImageFolder(root='../dataset', transform=train_transform)
+    loader = DataLoader(dataset, batch_size=5, shuffle=True, num_workers=0)
 
-    print(images.shape)
-    print(labels.shape)
-    break
+    print(dataset.class_to_idx)
+
+    # 所有图片的路径和对应的label
+    print(dataset.imgs)
+
+    # 没有任何的transform，所以返回的还是PIL Image对象
+    # print(dataset[0][1])# 第一维是第几张图，第二维为1返回label
+    # print(dataset[0][0]) # 为0返回图片数据
+    print(dataset[299][1])
