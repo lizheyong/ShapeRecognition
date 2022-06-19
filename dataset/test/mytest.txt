@@ -1,0 +1,3 @@
+../dataset/test/newrawfile20210602163917.bmp
+../dataset/test/newrawfile20210602190541.bmp
+../dataset/test/newrawfile20210602171529.bmp

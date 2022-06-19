@@ -5,7 +5,8 @@ from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 import torchvision
 import matplotlib.pyplot as plt
-plt.rcParams['font.sans-serif'] = ['KaiTi', 'SimHei', 'FangSong']  # 汉字字体,优先使用楷体，如果找不到楷体，则使用黑体
+plt.rcParams['font.sans-serif'] = ['Arial Unicode MS'] # mac用这个字体
+# plt.rcParams['font.sans-serif'] = ['KaiTi', 'SimHei', 'FangSong']  # 汉字字体,优先使用楷体，如果找不到楷体，则使用黑体 win
 plt.rcParams['font.size'] = 12  # 字体大小
 plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
 
@@ -14,15 +15,15 @@ np.set_printoptions(threshold=np.inf)
 torch.set_printoptions(precision=2, threshold=float('inf'), sci_mode=False)
 
 
-def practical_pred_net(net, device,  batch_size=10):
+def practical_pred_net(net, device,  batch_size=3):
     # 加载训练集
     transform = transforms.Compose([
         transforms.Grayscale(num_output_channels=1),
         transforms.ToTensor(),
-        transforms.Normalize(0.5, 0.5)
+        transforms.Normalize((0.5,),( 0.5,))
     ])
-    dataset = torchvision.datasets.ImageFolder(root='../dataset', transform=transform)
-    train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    dataset = torchvision.datasets.ImageFolder(root='../dataset/test_process', transform=transform)
+    train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
     criterion = torch.nn.CrossEntropyLoss()
     net.load_state_dict(torch.load('best_model_net.pth', map_location=device))  # 加载模型参数
@@ -33,15 +34,12 @@ def practical_pred_net(net, device,  batch_size=10):
     for img, label in train_loader:
         # 将数据拷贝到device中
         img = img.to(device=device, dtype=torch.float32)
-        label = label.to(device=device, dtype=torch.long)
         print(f'label:{label}')
         # 使用网络参数，输出预测结果
         out = net(img)
         # 计算loss
-        loss = criterion(out, label)
         pred = torch.max(out, dim=1)
         print(f'pred:{pred.indices}')
-        print(f'loss:{loss}')
         print(f'out:{out}')
         for i in range(img.size()[0]):
             to_img = transforms.ToPILImage()
